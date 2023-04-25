@@ -14,7 +14,7 @@ async function verifyPassword(plainPassword, hashedPassword) {
 }
 
 function generateJWTToken(payload) {
-    return jwt.sign(payload, JWT_SECRET);
+    return jwt.sign({ id: payload }, JWT_SECRET);
 }
 
 function validateJWTToken(token) {

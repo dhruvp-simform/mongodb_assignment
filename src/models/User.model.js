@@ -6,7 +6,8 @@ const userSchema = Schema({
     _id: {
         type: String,
         default: () => uuid(),
-        unique: true
+        unique: true,
+        index: true
     },
     username: {
         type: String,
@@ -35,7 +36,7 @@ const userSchema = Schema({
 });
 
 userSchema.methods.generateAuthToken = async function () {
-    const token = generateJWTToken({ _id: this._id });
+    const token = generateJWTToken(this._id);
 
     this.tokens.push(token);
     await this.save();

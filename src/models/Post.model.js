@@ -5,7 +5,8 @@ const postSchema = new Schema({
     _id: {
         type: String,
         default: () => uuid(),
-        unique: true
+        unique: true,
+        index: true
     },
     title: {
         type: String,

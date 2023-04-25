@@ -7,7 +7,7 @@ const MongodbService = require('../services/mongodb.service');
 const AuthGuard = require('../guards/auth.guard');
 
 const router = Router();
-await MongodbService();
+MongodbService();
 
 router.use('/auth', AuthController);
 router.use('/user', AuthGuard, UserController);
