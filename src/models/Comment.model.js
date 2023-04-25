@@ -4,8 +4,7 @@ const { v4: uuid } = require('uuid');
 const commentSchema = new Schema({
     _id: {
         type: String,
-        default: () => uuid(),
-        unique: true
+        default: () => uuid()
     },
     message: {
         type: String,

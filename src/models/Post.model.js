@@ -4,8 +4,7 @@ const { v4: uuid } = require('uuid');
 const postSchema = new Schema({
     _id: {
         type: String,
-        default: () => uuid(),
-        unique: true
+        default: () => uuid()
     },
     title: {
         type: String,
