@@ -18,17 +18,19 @@ const ERRORS = {
             description: `User authentication failure due to non-existence of ${keyword} - '${identifier}'`
         };
     },
-    'CERR_44': (username) => {
+    'CERR_44': (keyword, value) => {
         return {
             httpStatusCode: 409,
             message: 'Conflict',
-            description: `A user with username '${username}' already exists`
+            description: `A user with ${keyword} '${value}' already exists`
         };
     },
-    'CERR_45': {
-        httpStatusCode: 404,
-        message: 'Not Found',
-        description: 'Unable to fetch data, as the Server does not seem to have this Endpoint'
+    'CERR_45': (keyword) => {
+        return {
+            httpStatusCode: 404,
+            message: 'Not Found',
+            description: `${keyword} not found`
+        };
     },
     'CERR_46': {
         httpStatusCode: 400,

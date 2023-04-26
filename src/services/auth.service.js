@@ -5,57 +5,46 @@ const { verifyPassword } = require('../utils/utillities');
 const { signupBody, signinBody } = require('../validators/auth.validator');
 
 async function signup(req, res) {
-    try {
-        signupBody.validate(req.body);
+    signupBody.validate(req.body);
 
-        const { username, password, email } = req.body;
+    const { username, password, email } = req.body;
 
-        const user = new User({ username, password, email });
-        const token = await user.generateAuthToken();
+    const user = new User({ username, password, email });
+    const token = await user.generateAuthToken();
 
-        return res.send({
-            message: 'Success',
-            token
-        });
-    } catch (err) {
-        if (!err instanceof CustomError) err = new CustomError();
-        throw err;
-    }
+    return res.send({
+        message: 'Success',
+        token
+    });
 }
 
 async function signin(req, res) {
+    signinBody.validate(req.body);
 
-    try {
-        signinBody.validate(req.body);
+    const { identifier, password } = req.body;
+    let { error } = joi.string().email().validate(identifier);
 
-        const { identifier, password } = req.body;
-        let { error } = joi.string().email().validate(identifier);
+    let identifierKeyword = 'email';
+    if (error) identifierKeyword = 'username';
 
-        let identifierKeyword = 'email';
-        if (error) identifierKeyword = 'username';
+    const user = await User.findOne({
+        $or: [
+            { username: identifier.toLowerCase() },
+            { email: identifier }
+        ]
+    });
 
-        const user = await User.findOne({
-            $or: [
-                { username: identifier },
-                { email: identifier }
-            ]
-        });
+    if (!user) throw new CustomError(ERRORS.CERR_43(identifierKeyword, identifier));
 
-        if (!user) throw new CustomError(ERRORS.CERR_43(identifierKeyword, identifier));
+    if (!(await verifyPassword(password, user.password)))
+        throw new CustomError(ERRORS.CERR_42);
 
-        if (!(await verifyPassword(password, user.password)))
-            throw new CustomError(ERRORS.CERR_42);
+    const token = await user.generateAuthToken();
 
-        const token = await user.generateAuthToken();
-
-        return res.send({
-            message: 'Success',
-            token
-        });
-    } catch (err) {
-        if (!err instanceof CustomError) err = new CustomError();
-        throw err;
-    }
+    return res.send({
+        message: 'Success',
+        token
+    });
 }
 
 async function signout(req, res) {

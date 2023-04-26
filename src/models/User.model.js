@@ -1,6 +1,7 @@
 const { Schema, model } = require('mongoose');
 const { v4: uuid } = require('uuid');
 const { generateJWTToken, hashPassword } = require('../utils/utillities');
+const Post = require('./Post.model');
 
 const userSchema = Schema({
     _id: {
@@ -41,6 +42,15 @@ userSchema.methods.generateAuthToken = async function () {
     return token;
 };
 
+userSchema.methods.toJSON = function () {
+    const user = this.toObject();
+
+    delete user.password;
+    delete user.tokens;
+
+    return user;
+};
+
 userSchema.pre('save', async function (next) {
     if (this.isModified('password'))
         this.password = await hashPassword(this.password);
@@ -49,7 +59,7 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.pre('remove', async function (next) {
-    // Delete Posts and Comments for the same user
+    await Post.deleteMany({ author: this._id });
     next();
 });
 

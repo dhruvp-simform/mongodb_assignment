@@ -1,6 +1,6 @@
 const Comment = require('../models/Comment.model');
 const Post = require('../models/Post.model');
-const { CustomError } = require('../utils/customError');
+const { CustomError, ERRORS } = require('../utils/customError');
 const { reqParams } = require('../validators/app.validator');
 const { createCommentBody, updateCommentBody } = require('../validators/comment.validator');
 
@@ -13,97 +13,86 @@ async function getComments(req, res) {
 }
 
 async function createComment(req, res) {
-    try {
-        createCommentBody.validate(req.body);
+    createCommentBody.validate(req.body);
 
-        const { message, postId } = req.body;
+    const { message, postId } = req.body;
 
-        const comment = new Comment({
-            message,
-            author: req.user._id,
-            post: postId
-        });
+    const post = await Post.findOne({ _id: postId });
+    if (!post) throw new CustomError(ERRORS.CERR_45('Post'));
 
-        await comment.save();
+    const comment = new Comment({
+        message,
+        author: req.user._id,
+        post: postId
+    });
 
-        return res.send({
-            message: 'Success',
-            data: comment
-        });
-    } catch (err) {
-        if (!err instanceof CustomError) err = new CustomError();
-        throw err;
-    }
+    await comment.save();
+
+    return res.send({
+        message: 'Success',
+        data: comment
+    });
 }
 
 async function getComment(req, res) {
-    try {
-        reqParams.validate(req.params);
+    reqParams.validate(req.params);
 
-        const { id } = req.params;
+    const { id } = req.params;
 
-        const comment = await Comment.findOne({
-            _id: id,
-            author: req.user._id
-        });
+    const comment = await Comment.findOne({
+        _id: id,
+        author: req.user._id
+    });
 
-        return res.send({
-            message: 'Success',
-            data: comment
-        });
-    } catch (err) {
-        if (!err instanceof CustomError) err = new CustomError();
-        throw err;
-    }
+    if (!comment) throw new CustomError(ERRORS.CERR_45('Comment'));
+
+    return res.send({
+        message: 'Success',
+        data: comment
+    });
 }
 
 async function updateComment(req, res) {
-    try {
-        reqParams.validate(req.params);
-        const { id } = req.params;
+    reqParams.validate(req.params);
+    const { id } = req.params;
 
-        updateCommentBody.validate(req.body);
+    updateCommentBody.validate(req.body);
 
-        const { message, postId } = req.body;
+    const { message, postId } = req.body;
 
-        const comment = await Post.findOneAndUpdate({
+    const comment = await Comment.findOneAndUpdate(
+        {
             _id: id,
             author: req.user._id,
             post: postId
-        }, {
-            $set: { message }
-        });
+        },
+        { message },
+        { new: true }
+    );
 
-        return res.send({
-            message: 'Success',
-            data: comment
-        });
+    if (!comment) throw new CustomError(ERRORS.CERR_45('Comment'));
 
-    } catch (err) {
-        if (!err instanceof CustomError) err = new CustomError();
-        throw err;
-    }
+    return res.send({
+        message: 'Success',
+        data: comment
+    });
 }
 
 async function deleteComment(req, res) {
+    reqParams.validate(req.params);
 
-    try {
-        reqParams.validate(req.params);
+    const { id } = req.params;
 
-        const { id } = req.params;
+    const result = await Comment.deleteOne({
+        _id: id,
+        author: req.user._id
+    });
 
-        await Comment.deleteOne({
-            _id: id,
-            author: req.user._id
-        });
+    if (!result.deletedCount) throw new CustomError(ERRORS.CERR_45('Comment'));
 
-        return res.send({
-            message: 'Success'
-        });
-    } catch (err) {
-        if (!err instanceof CustomError) err = new CustomError();
-        throw err;
-    }
+    return res.send({
+        message: 'Success'
+    });
 }
 
 module.exports = {

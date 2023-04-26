@@ -1,4 +1,5 @@
 const User = require('../models/User.model');
+const { CustomError, ERRORS } = require('../utils/customError');
 
 async function getProfile(req, res) {
     return res.send({
@@ -8,9 +9,11 @@ async function getProfile(req, res) {
 }
 
 async function closeAccount(req, res) {
-    await User.deleteOne({
+    const result = await User.deleteOne({
         _id: req.user._id
     });
+
+    if (!result.deletedCount) throw new CustomError(ERRORS.CERR_45('User'));
 
     return res.send({
         message: 'Success'

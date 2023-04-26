@@ -1,11 +1,12 @@
 const { Router } = require('express');
+const { CustomError } = require('../utils/customError');
 const CommentService = require('../services/comment.service');
 
 const router = Router();
 
 router.get('/all', async function (req, res, next) {
     try {
-        return CommentService.getComments(req, res);
+        await CommentService.getComments(req, res);
     } catch (err) {
         if (!err instanceof CustomError) err = new CustomError();
         next(err);
@@ -14,8 +15,10 @@ router.get('/all', async function (req, res, next) {
 
 router.post('/create', async function (req, res, next) {
     try {
-        return CommentService.createComment(req, res);
+        console.log(req.body);
+        await CommentService.createComment(req, res);
     } catch (err) {
+        console.log(err);
         if (!err instanceof CustomError) err = new CustomError();
         next(err);
     }
@@ -23,7 +26,7 @@ router.post('/create', async function (req, res, next) {
 
 router.get('/get/:id', async function (req, res, next) {
     try {
-        return CommentService.getComment(req, res);
+        await CommentService.getComment(req, res);
     } catch (err) {
         if (!err instanceof CustomError) err = new CustomError();
         next(err);
@@ -32,7 +35,7 @@ router.get('/get/:id', async function (req, res, next) {
 
 router.put('/update/:id', async function (req, res, next) {
     try {
-        return CommentService.updateComment(req, res);
+        await CommentService.updateComment(req, res);
     } catch (err) {
         if (!err instanceof CustomError) err = new CustomError();
         next(err);
@@ -41,7 +44,7 @@ router.put('/update/:id', async function (req, res, next) {
 
 router.delete('/delete/:id', async function (req, res, next) {
     try {
-        return CommentService.deleteComment(req, res);
+        await CommentService.deleteComment(req, res);
     } catch (err) {
         if (!err instanceof CustomError) err = new CustomError();
         next(err);

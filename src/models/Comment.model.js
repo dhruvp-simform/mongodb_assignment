@@ -12,10 +12,12 @@ const commentSchema = new Schema({
         trim: true
     },
     author: {
-        type: String
+        type: String,
+        required: true
     },
     post: {
-        type: String
+        type: String,
+        required: true
     }
 });
 
