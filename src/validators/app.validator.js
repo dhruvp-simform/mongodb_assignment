@@ -1,9 +1,14 @@
-const joi = require('joi');
+const Joi = require('joi');
+const { CustomError, ERRORS } = require('../utils/customError');
 
-const reqParams = joi.string().trim().min(1).required();
-const nonemptyObject = joi.object().empty().not();
+const reqParams = Joi.object({
+    id: Joi
+        .string()
+        .trim()
+        .min(1)
+        .required()
+}).error(err => { throw new CustomError(ERRORS.CERR_47); });
 
 module.exports = {
-    reqParams,
-    nonemptyObject
+    reqParams
 };

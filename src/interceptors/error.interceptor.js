@@ -1,3 +1,5 @@
+const { CustomError } = require('../utils/customError');
+
 module.exports = function (err, req, res, next) {
     if (!(err instanceof CustomError)) err = new CustomError();
 

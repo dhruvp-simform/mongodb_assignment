@@ -1,14 +1,33 @@
-const joi = require('joi');
+const Joi = require('joi');
+const { CustomError, ERRORS } = require('../utils/customError');
 
-const createpostBody = joi.object({
-    title: joi.string().trim().min(1).required(),
-    description: joi.string().trim().min(1).required()
-});
+const createpostBody = Joi.object({
+    title: Joi
+        .string()
+        .trim()
+        .min(1)
+        .required(),
+    description: Joi
+        .string()
+        .trim()
+        .min(1)
+        .required()
+}).error(err => { throw new CustomError(ERRORS.CERR_46); });
 
-const updatepostBody = joi.object({
-    title: joi.string().trim().min(1).required(),
-    description: joi.string().min(1).trim().required(),
-});
+const updatepostBody = Joi.object({
+    title: Joi
+        .string()
+        .trim()
+        .min(1)
+        .optional(),
+    description: Joi
+        .string()
+        .min(1)
+        .trim()
+        .optional(),
+}).min(1)
+    .required()
+    .error(err => { throw new CustomError(ERRORS.CERR_46); });
 
 module.exports = {
     createpostBody,

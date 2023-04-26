@@ -1,15 +1,16 @@
-const joi = require('joi');
+const Joi = require('joi');
+const { CustomError, ERRORS } = require('../utils/customError');
 
-const signupBody = joi.object({
-    username: joi.string().trim().min(1).required(),
-    password: joi.string().trim().min(8).required(),
-    email: joi.string().email().required()
-});
+const signupBody = Joi.object({
+    username: Joi.string().trim().min(1).required(),
+    password: Joi.string().trim().min(8).required(),
+    email: Joi.string().email().required()
+}).error(err => { throw new CustomError(ERRORS.CERR_46); });
 
-const signinBody = joi.object({
-    identifier: joi.string().trim().min(1).required(),
-    password: joi.string().trim().min(8).required()
-});
+const signinBody = Joi.object({
+    identifier: Joi.string().trim().min(1).required(),
+    password: Joi.string().trim().min(8).required()
+}).error(err => { throw new CustomError(ERRORS.CERR_46); });
 
 module.exports = {
     signupBody,
