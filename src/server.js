@@ -4,14 +4,20 @@ const express = require('express');
 const { PORT, HOST } = require('./utils/env');
 const AppController = require('./controllers/app.controller');
 const ErrorInterceptor = require('./interceptors/error.interceptor');
+const MongodbService = require('./services/mongodb.service');
 
-const app = express();
+async function bootstrap() {
+    const app = express();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use('/api', AppController);
-app.use(ErrorInterceptor);
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    app.use('/api', AppController);
+    app.use(ErrorInterceptor);
 
-app.listen(PORT, () => {
-    console.log(`Server is running on ${HOST}:${PORT}`);
-});
+    await MongodbService();
+    app.listen(PORT, () => {
+        console.log(`Server is running on ${HOST}:${PORT}`);
+    });
+}
+
+bootstrap();

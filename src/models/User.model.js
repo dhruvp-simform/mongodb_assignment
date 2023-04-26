@@ -5,9 +5,7 @@ const { generateJWTToken, hashPassword } = require('../utils/utillities');
 const userSchema = Schema({
     _id: {
         type: String,
-        default: () => uuid(),
-        unique: true,
-        index: true
+        default: () => uuid()
     },
     username: {
         type: String,

@@ -4,9 +4,7 @@ const { v4: uuid } = require('uuid');
 const postSchema = new Schema({
     _id: {
         type: String,
-        default: () => uuid(),
-        unique: true,
-        index: true
+        default: () => uuid()
     },
     title: {
         type: String,
@@ -24,4 +22,4 @@ const postSchema = new Schema({
 
 const Post = model('Post', postSchema);
 
-module.exports = Post; 
+module.exports = Post;
