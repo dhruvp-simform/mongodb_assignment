@@ -29,7 +29,24 @@ const updatepostBody = Joi.object({
     .required()
     .error(err => { throw new CustomError(ERRORS.CERR_46); });
 
+const postQueryBody = Joi.object({
+    search: Joi
+        .string()
+        .trim()
+        .min(1)
+        .optional(),
+    page: Joi
+        .number()
+        .min(0)
+        .optional(),
+    sort: Joi
+        .string()
+        .valid('asc', 'desc')
+        .optional()
+}).error(err => { throw new CustomError(ERRORS.CERR_48); });
+
 module.exports = {
     createpostBody,
-    updatepostBody
+    updatepostBody,
+    postQueryBody
 };

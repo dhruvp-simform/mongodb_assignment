@@ -1,10 +1,28 @@
 const Post = require("../models/Post.model");
-const { createpostBody, updatepostBody } = require('../validators/post.validator');
+const { createpostBody, updatepostBody, postQueryBody } = require('../validators/post.validator');
 const { reqParams } = require('../validators/app.validator');
 const { CustomError, ERRORS } = require("../utils/customError");
+const { PAGESIZE } = require('../utils/env');
 
 async function getPosts(req, res) {
-    const posts = await Post.find({});
+    const { value } = postQueryBody.validate(req.query);
+    req.query = value;
+
+    const aggregationPipeline = [];
+    if (req.query.search) aggregationPipeline.push({
+        $match: {
+            $text: { $search: req.query.search }
+        }
+    });
+
+    if (req.query.sort) aggregationPipeline.push({ $sort: { title: req.query.sort === 'asc' ? 1 : -1 } });
+
+    if (req.query.page) aggregationPipeline.push(
+        { $skip: PAGESIZE * (req.query.page - 1) },
+        { $limit: PAGESIZE }
+    );
+
+    const posts = await Post.aggregate(aggregationPipeline);
 
     return res.send({
         message: 'Success',

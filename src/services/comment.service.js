@@ -2,10 +2,12 @@ const Comment = require('../models/Comment.model');
 const Post = require('../models/Post.model');
 const { CustomError, ERRORS } = require('../utils/customError');
 const { reqParams } = require('../validators/app.validator');
-const { createCommentBody, updateCommentBody } = require('../validators/comment.validator');
+const { createCommentBody, updateCommentBody, commentQueryParams } = require('../validators/comment.validator');
 
 async function getComments(req, res) {
-    const comments = await Comment.find({});
+    commentQueryParams.validate(req.query);
+
+    const comments = await Comment.find({ post: req.query.post });
     return res.send({
         message: 'Success',
         data: comments

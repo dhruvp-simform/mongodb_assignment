@@ -10,7 +10,8 @@ const postSchema = new Schema({
     title: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        index: 'text'
     },
     description: {
         type: String,

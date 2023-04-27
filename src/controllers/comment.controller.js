@@ -15,10 +15,8 @@ router.get('/all', async function (req, res, next) {
 
 router.post('/create', async function (req, res, next) {
     try {
-        console.log(req.body);
         await CommentService.createComment(req, res);
     } catch (err) {
-        console.log(err);
         if (!err instanceof CustomError) err = new CustomError();
         next(err);
     }

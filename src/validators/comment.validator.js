@@ -9,6 +9,7 @@ const createCommentBody = Joi.object({
         .required(),
     postId: Joi
         .string()
+        .uuid()
         .trim()
         .min(1)
         .required()
@@ -22,14 +23,18 @@ const updateCommentBody = Joi.object({
         .required(),
     postId: Joi
         .string()
+        .uuid()
         .trim()
         .min(1)
         .required()
-}).min(2)
-    .required()
-    .error(err => { throw new CustomError(ERRORS.CERR_46); });
+}).error(err => { throw new CustomError(ERRORS.CERR_46); });
+
+const commentQueryParams = Joi.object({
+    post: Joi.string().uuid().min(1).required()
+}).error(err => { throw new CustomError(ERRORS.CERR_48); });
 
 module.exports = {
     createCommentBody,
-    updateCommentBody
+    updateCommentBody,
+    commentQueryParams
 };

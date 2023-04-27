@@ -42,6 +42,11 @@ const ERRORS = {
         message: 'Bad Request',
         description: 'Invalid Request Parameters'
     },
+    'CERR_48': {
+        httpStatusCode: 400,
+        message: 'Bad Request',
+        description: 'Invalid Query Parameters'
+    },
     'CERR_51': {
         httpStatusCode: 500,
         message: 'Internal Server Error',

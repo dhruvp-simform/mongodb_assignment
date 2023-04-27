@@ -17,7 +17,6 @@ router.post('/create', async function (req, res, next) {
     try {
         await PostService.createPost(req, res);
     } catch (err) {
-        console.log('Hey');
         if (!err instanceof CustomError) err = new CustomError();
         next(err);
     }
